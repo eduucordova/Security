@@ -10,21 +10,12 @@ import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
-import java.security.InvalidAlgorithmParameterException;
-import java.security.InvalidKeyException;
 import java.security.NoSuchAlgorithmException;
 import java.security.NoSuchProviderException;
 import java.security.SecureRandom;
 import java.security.Security;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import javax.crypto.BadPaddingException;
-import javax.crypto.Cipher;
-import javax.crypto.IllegalBlockSizeException;
-import javax.crypto.NoSuchPaddingException;
-import javax.crypto.SecretKey;
-import javax.crypto.spec.IvParameterSpec;
-import org.bouncycastle.crypto.InvalidCipherTextException;
 import org.bouncycastle.crypto.engines.AESEngine;
 import org.bouncycastle.crypto.modes.GCMBlockCipher;
 import org.bouncycastle.crypto.params.AEADParameters;
@@ -54,44 +45,6 @@ public class EncryptDecryptFile {
         doGcmBlockCipher(false, key, iv, inputFile, outputFile);
     }
 
-//    private static void doCrypto(int cipherMode, SecretKey key, byte[] iv, File inputFile, File outputFile) {
-//        try {
-//            IvParameterSpec ivSpec = new IvParameterSpec(iv);
-//            Cipher cipher = Cipher.getInstance("AES/GCM/NoPadding", "BC");
-//            cipher.init(cipherMode, key, ivSpec);
-//            
-//            FileInputStream inputStream = new FileInputStream(inputFile);
-//            byte[] inputBytes = new byte[(int) inputFile.length()];
-//            inputStream.read(inputBytes);
-//            
-//            byte[] outputBytes = {};
-//            if(cipherMode == Cipher.DECRYPT_MODE) {
-//                byte[] destination = new byte[inputBytes.length - iv.length];
-//                System.arraycopy(inputBytes, 16, destination, 0, destination.length);
-//                outputBytes = cipher.doFinal(destination);
-//            }
-//            else {
-//                outputBytes = cipher.doFinal(inputBytes);
-//            }
-//            FileOutputStream outputStream = new FileOutputStream(outputFile);
-//            
-//            if(cipherMode == Cipher.ENCRYPT_MODE) {
-//                byte[] iv_output = new byte[iv.length + outputBytes.length];
-//                System.arraycopy(iv, 0, iv_output, 0, iv.length);
-//                System.arraycopy(outputBytes, 0, iv_output, iv.length, outputBytes.length);
-//                outputStream.write(iv_output);
-//            }
-//            else {
-//                outputStream.write(outputBytes);
-//            }
-//            
-//            inputStream.close();
-//            outputStream.close();
-//        } catch (Exception ex) {
-//            Logger.getLogger(EncryptDecryptFile.class.getName()).log(Level.SEVERE, null, ex);
-//        }
-//    }
-
     private static byte[] generateRandomIv() {
         SecureRandom random = null;
         try {
@@ -120,17 +73,13 @@ public class EncryptDecryptFile {
             // Get file bytes
             FileInputStream inputStream = null;
             byte[] inputBytes = {};
-            try {
-                inputStream = new FileInputStream(inputFile);
-                inputBytes = new byte[(int) inputFile.length()];
-                inputStream.read(inputBytes);
-            } catch (Exception ex) {
-                Logger.getLogger(EncryptDecryptFile.class.getName()).log(Level.SEVERE, null, ex);
-            }
+            inputStream = new FileInputStream(inputFile);
+            inputBytes = new byte[(int) inputFile.length()];
+            inputStream.read(inputBytes);
 
             int lengthOutc = 0;
 
-            byte[] outputBytes = {};
+            byte[] outputBytes = new byte[(int) inputFile.length()];
             // false se for decript
             if(!encrypt) {
                 byte[] destination = new byte[inputBytes.length - iv.length];
@@ -139,8 +88,13 @@ public class EncryptDecryptFile {
                 gcm.doFinal(outputBytes, lengthOutc);
             }
             else {
+                try{
                 lengthOutc = gcm.processBytes(inputBytes, 0, inputBytes.length, outputBytes, 0);
-                gcm.doFinal(outputBytes, lengthOutc);
+                gcm.doFinal(outputBytes, 0);
+                }
+                catch (Exception ex){
+                    Logger.getLogger(EncryptDecryptFile.class.getName()).log(Level.SEVERE, null, ex);
+                }
             }
 
 
@@ -159,7 +113,7 @@ public class EncryptDecryptFile {
             inputStream.close();
             outputStream.close();
         }catch(Exception ex){
-            //fuck it
+            Logger.getLogger(EncryptDecryptFile.class.getName()).log(Level.SEVERE, null, ex);
         }
     }
 }

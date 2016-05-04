@@ -38,7 +38,8 @@ public class UI {
             switch (line) {
                 case "1" :
                     System.out.println("Digite o caminho do arquivo para criptografar: ");
-                    filePath = input.nextLine();
+//                    filePath = input.nextLine();
+                    filePath = "/home/eduardo/tempData/Teste";
                     File inputFile = new File(filePath);
                     hmac = Util.GenerateHmacWithFileName(inputFile.getName());
                     if(Table.checkElement(hmac)){
@@ -46,7 +47,7 @@ public class UI {
                         break;
                     }
                     key = Util.GenerateSecureKey("663878", 1000);
-                    File encryptedFile = new File("../AppData/document.enc");
+                    File encryptedFile = new File("/home/eduardo/tempData/"+hmac);
                     try {
                         EncryptDecryptFile.encrypt(Hex.encodeHexString(key.getEncoded()), inputFile, encryptedFile);
                     } catch (Exception ex) {
