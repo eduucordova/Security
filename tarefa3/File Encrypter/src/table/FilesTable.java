@@ -28,7 +28,15 @@ public class FilesTable {
         table.put(hmac, secretKey);
     }
     
+    public void removeElement(String hmac) {
+        table.remove(hmac);
+    }
+    
     public boolean checkElement(String HMac) {
         return table.containsKey(HMac);
+    }
+    
+    public String getValue(String HMac) {
+        return table.get(HMac);
     }
 }

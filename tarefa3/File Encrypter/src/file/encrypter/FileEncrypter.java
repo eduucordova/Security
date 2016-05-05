@@ -6,6 +6,7 @@
 package file.encrypter;
 
 import javax.crypto.SecretKey;
+import org.apache.commons.codec.binary.Hex;
 import table.FilesTable;
 
 /**
@@ -24,8 +25,8 @@ public class FileEncrypter {
         FilesTable tableFiles = new FilesTable();
     }
     
-    public SecretKey GenerateSecureKey(String masterKey, int it) {
-        return PBKDF2Util.generateDerivedKey(masterKey, it);
+    public String GenerateSecureKey(String masterKey, int it) {
+        return Hex.encodeHexString((PBKDF2Util.generateDerivedKey(masterKey, it)).getEncoded());
     }
     
     public String GenerateHmacWithFileName(String fileName) {

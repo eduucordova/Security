@@ -23,8 +23,7 @@ public class UI {
     
     public void Start() {
         int choice = 0;
-        String filePath, hmac = "";
-        SecretKey key = null;
+        String filePath, hmac, key = "";
         Scanner input = new Scanner(System.in);
         
         while(choice != 4) {
@@ -49,25 +48,34 @@ public class UI {
                     key = Util.GenerateSecureKey("663878", 1000);
                     File encryptedFile = new File("/home/eduardo/tempData/"+hmac);
                     try {
-                        EncryptDecryptFile.encrypt(Hex.encodeHexString(key.getEncoded()), inputFile, encryptedFile);
+                        EncryptDecryptFile.encrypt(key, inputFile, encryptedFile);
                     } catch (Exception ex) {
                         System.out.println(ex.getMessage());
                         break;
                     }
-                    Table.addElement(hmac, Hex.encodeHexString(key.getEncoded()));
+                    Table.addElement(hmac, key);
                     System.out.println("Arquivo criptografado com sucesso.");
                     break;
                 case "2" :
-                    System.out.println("Digite o caminho do arquivo para descriptografar: ");
-                    filePath = input.nextLine();
-                    inputFile = new File(filePath);
-                    File decryptedFile = new File("../AppData/document.decrypted");
+                    System.out.println("Digite o nome do arquivo que deseja descriptografar: ");
+                    //filePath = input.nextLine();
+                    filePath = "Teste";
+                    hmac = Util.GenerateHmacWithFileName(filePath);
+                    if(!Table.checkElement(hmac)){
+                        System.out.println("Arquivo não encontrado!");
+                        break;
+                    }else{
+                        key = Table.getValue(hmac);
+                    }
+                    inputFile = new File("/home/eduardo/tempData/"+hmac);
+                    File decryptedFile = new File("/home/eduardo/tempData/decrypted/"+filePath);
                     try {
-                        EncryptDecryptFile.decrypt(Hex.encodeHexString(key.getEncoded()), inputFile, decryptedFile);
+                        EncryptDecryptFile.decrypt(key, inputFile, decryptedFile);
                     } catch (Exception ex) {
                         System.out.println(ex.getMessage());
                     }
-                    System.out.println("Arquivo criptografado com sucesso.\nGuardado em ~/AppData/document.decrypted.");
+                    Table.removeElement(hmac);
+                    System.out.println("Arquivo descriptografado com sucesso.");
                     break;
                 case "3" :
                     Table.print();

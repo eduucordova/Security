@@ -69,7 +69,7 @@ public class EncryptDecryptFile {
 
             // true para cifrar
             gcm.init(encrypt, params);
-
+            
             // Get file bytes
             FileInputStream inputStream = null;
             byte[] inputBytes = {};
@@ -79,18 +79,22 @@ public class EncryptDecryptFile {
 
             int lengthOutc = 0;
 
-            byte[] outputBytes = new byte[(int) inputFile.length()];
+            byte[] outputBytes = {};
             // false se for decript
             if(!encrypt) {
+                // Retira o IV da frente do arquivo cifrado
                 byte[] destination = new byte[inputBytes.length - iv.length];
                 System.arraycopy(inputBytes, 16, destination, 0, destination.length);
+                
+                outputBytes = new byte[gcm.getOutputSize(destination.length)];
                 lengthOutc = gcm.processBytes(destination, 0, destination.length, outputBytes, 0);
                 gcm.doFinal(outputBytes, lengthOutc);
             }
             else {
                 try{
-                lengthOutc = gcm.processBytes(inputBytes, 0, inputBytes.length, outputBytes, 0);
-                gcm.doFinal(outputBytes, 0);
+                    outputBytes = new byte[gcm.getOutputSize((int) inputFile.length())];
+                    lengthOutc = gcm.processBytes(inputBytes, 0, inputBytes.length, outputBytes, 0);
+                    gcm.doFinal(outputBytes, lengthOutc);
                 }
                 catch (Exception ex){
                     Logger.getLogger(EncryptDecryptFile.class.getName()).log(Level.SEVERE, null, ex);
