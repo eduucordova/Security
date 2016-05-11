@@ -5,7 +5,9 @@
  */
 package main;
 
-import static file.encrypter.FileEncrypter.FileEncrypter;
+import java.io.FileNotFoundException;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 /**
  * @author eduardo
@@ -16,8 +18,12 @@ public class main {
      * @param args the command line arguments
      */
     public static void main(String[] args) {
-        //FileEncrypter("663878");
         UI UserInterface = new UI();
-        UserInterface.Start();
+        try {
+            if(UserInterface.Authenticate())
+                UserInterface.Start();
+        } catch (FileNotFoundException ex) {
+            Logger.getLogger(main.class.getName()).log(Level.SEVERE, null, ex);
+        }
     }
 }

@@ -116,6 +116,8 @@ public class EncryptDecryptFile {
 
             inputStream.close();
             outputStream.close();
+            
+            gcm.reset();
         }catch(Exception ex){
             Logger.getLogger(EncryptDecryptFile.class.getName()).log(Level.SEVERE, null, ex);
         }

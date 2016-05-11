@@ -5,31 +5,21 @@
  */
 package file.encrypter;
 
-import javax.crypto.SecretKey;
 import org.apache.commons.codec.binary.Hex;
-import table.FilesTable;
 
 /**
  * @author eduardo
  */
 public class FileEncrypter {
     
-//    private static Table<String, String> tableFiles;
-    
-    public static void FileEncrypter(String masterKey) {
-        for(int i = 0; i< 10; i++) {
-        String hamc = HMACUtil.GenerateHmac("Isso é uma mensagem aleatória");
-        System.out.println(hamc);
-        }
-        
-        FilesTable tableFiles = new FilesTable();
-    }
-    
     public String GenerateSecureKey(String masterKey, int it) {
-        return Hex.encodeHexString((PBKDF2Util.generateDerivedKey(masterKey, it)).getEncoded());
+        return GenerateSecureKey(masterKey, null, it);
+    }
+    public String GenerateSecureKey(String masterKey, String salt, int it) {
+        return Hex.encodeHexString((PBKDF2Util.generateDerivedKey(masterKey, salt, it)).getEncoded());
     }
     
     public String GenerateHmacWithFileName(String fileName) {
-        return HMACUtil.GenerateHmac(fileName);
+        return HMACUtil.GenerateHmac("663878", fileName);
     }
 }

@@ -5,22 +5,25 @@
  */
 package table;
 
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
+import java.io.ObjectInputStream;
+import java.io.ObjectOutputStream;
 import java.util.HashMap;
-import java.util.Map;
 
 /**
  *
  * @author eduardo
  */
-public class FilesTable {
-    private final Map<String, String> table;
+public class FilesTable extends HashMap{
+    private final HashMap<String, String> table;
     
     public FilesTable() {
         table = new HashMap<>();
     }
     
     public void print(){
-        System.out.println("---- Nome do Arquivo ---------|---------- Chave Simétrica ---------");
+        System.out.println("------------------------ Nome do Arquivo -------------------------------|----------------------------- Chave Simétrica --------------------------");
         table.forEach((k,v)->System.out.println("--- " + k + " ---|--- " + v + " ---"));
     }
     
@@ -38,5 +41,28 @@ public class FilesTable {
     
     public String getValue(String HMac) {
         return table.get(HMac);
+    }
+    
+    public void saveStatus(){
+        try {
+            FileOutputStream saveFile = new FileOutputStream("current.dat");
+            ObjectOutputStream out = new ObjectOutputStream(saveFile);
+            out.writeObject(this);
+            out.close();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+    public static HashMap<String, String> loadStatus(){
+        HashMap<String, String> result = null;
+        try {
+           FileInputStream saveFile = new FileInputStream("current.dat");
+           ObjectInputStream in = new ObjectInputStream(saveFile);
+           result = (HashMap<String, String>) in.readObject();
+           in.close();
+        } catch (Exception e) {
+           e.printStackTrace();
+        }
+        return result;
     }
 }
