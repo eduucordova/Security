@@ -45,7 +45,7 @@ public class FilesTable extends HashMap{
     
     public void saveStatus(){
         try {
-            FileOutputStream saveFile = new FileOutputStream("current.dat");
+            FileOutputStream saveFile = new FileOutputStream("../current.dat");
             ObjectOutputStream out = new ObjectOutputStream(saveFile);
             out.writeObject(this);
             out.close();
@@ -56,7 +56,7 @@ public class FilesTable extends HashMap{
     public static HashMap<String, String> loadStatus(){
         HashMap<String, String> result = null;
         try {
-           FileInputStream saveFile = new FileInputStream("current.dat");
+           FileInputStream saveFile = new FileInputStream("../current.dat");
            ObjectInputStream in = new ObjectInputStream(saveFile);
            result = (HashMap<String, String>) in.readObject();
            in.close();

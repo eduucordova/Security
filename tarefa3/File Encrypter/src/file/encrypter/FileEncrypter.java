@@ -19,7 +19,7 @@ public class FileEncrypter {
         return Hex.encodeHexString((PBKDF2Util.generateDerivedKey(masterKey, salt, it)).getEncoded());
     }
     
-    public String GenerateHmacWithFileName(String fileName) {
-        return HMACUtil.GenerateHmac("663878", fileName);
+    public String GenerateHmacWithFileName(String masterKey, String fileName) {
+        return HMACUtil.GenerateHmac(masterKey, fileName);
     }
 }
